@@ -36,16 +36,31 @@
 *
 */
 
-/*hook OnPlayerRequestClass(playerid, classid) {
+hook OnPlayerRequestClass(playerid, classid) {
 
-	//new
-	//	classLoc = random(sizeof(gArr_ClassesEnvironment));
+	new
+		classLoc = random(sizeof(gArr_ClassesEnvironment));
 
 	if(!IsPlayerNPC(playerid) && Player_LoggedIn(playerid)) {
 
 		PlayerPlaySound(playerid, 1097, 0.0, 0.0, 0.0);
 
-		Player_SetCurrentClass(playerid, classid);
+		// Validate class
+		Player_ClassValidate(playerid, classid);
+
+		new
+			currClass = Player[playerid][epd_CurrentClass];
+
+		SetPlayerSkin(playerid, gArr_Classes[currClass][escd_SkinID]);
+		SetPlayerPos(playerid, gArr_ClassesEnvironment[classLoc][eced_X], gArr_ClassesEnvironment[classLoc][eced_Y], gArr_ClassesEnvironment[classLoc][eced_Z]);
+		SetPlayerFacingAngle(playerid, gArr_ClassesEnvironment[classLoc][eced_A]);
+
+		SetPlayerCameraLookAt(playerid, gArr_ClassesEnvironment[classLoc][eced_X], gArr_ClassesEnvironment[classLoc][eced_Y], gArr_ClassesEnvironment[classLoc][eced_Z]);
+		SetPlayerCameraPos(playerid, 
+							gArr_ClassesEnvironment[classLoc][eced_X] + (5 * floatsin(-gArr_ClassesEnvironments[classLoc][eced_A], degrees)),
+							gArr_ClassesEnvironment[classLoc][eced_Y] + (5 * floatcos(-gArr_ClassesEnvironments[classLoc][eced_A], degrees)),
+							gArr_ClassesEnvironment[classLoc][eced_Z]
+						);
 	}
 	return true;
 }
@@ -77,20 +92,3 @@ Player_CLassValidate(playerid, classid, max_classes = (sizeof(gArr_Classes) - 1)
 	}
 	Player[playerid][epd_CurrentClass] = tempClass;
 }
-
-Player_SetCurrentClass(playerid, classid) {
-
-	Player[playerid][epd_CurrentClass] = classid;
-}
-
-hook OnPlayerRequestSpawnEx(playerid, classid) {
-
-	return true;
-}
-
-Player_GetCurrentClass(playerid) {
-
-	return Player[playerid][epd_CurrentClass];
-}*/
-
-
