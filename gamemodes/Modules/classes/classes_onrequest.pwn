@@ -49,23 +49,19 @@ hook OnPlayerRequestClass(playerid, classid) {
 		Player_ClassValidate(playerid, classid);
 
 		new
-			currClass = Player[playerid][epd_CurrentClass];
+			currClass = Player[playerid][epd_TempCurrentClass];
 
 		SetPlayerSkin(playerid, gArr_Classes[currClass][escd_SkinID]);
 		SetPlayerPos(playerid, gArr_ClassesEnvironment[classLoc][eced_X], gArr_ClassesEnvironment[classLoc][eced_Y], gArr_ClassesEnvironment[classLoc][eced_Z]);
 		SetPlayerFacingAngle(playerid, gArr_ClassesEnvironment[classLoc][eced_A]);
 
 		SetPlayerCameraLookAt(playerid, gArr_ClassesEnvironment[classLoc][eced_X], gArr_ClassesEnvironment[classLoc][eced_Y], gArr_ClassesEnvironment[classLoc][eced_Z]);
-		SetPlayerCameraPos(playerid, 
-							gArr_ClassesEnvironment[classLoc][eced_X] + (5 * floatsin(-gArr_ClassesEnvironments[classLoc][eced_A], degrees)),
-							gArr_ClassesEnvironment[classLoc][eced_Y] + (5 * floatcos(-gArr_ClassesEnvironments[classLoc][eced_A], degrees)),
-							gArr_ClassesEnvironment[classLoc][eced_Z]
-						);
+		SetPlayerCameraPos(playerid, gArr_ClassesEnvironment[classLoc][eced_X] + (5 * floatsin(-gArr_ClassesEnvironment[classLoc][eced_A], degrees)), gArr_ClassesEnvironment[classLoc][eced_Y] + (5 * floatcos(-gArr_ClassesEnvironment[classLoc][eced_A], degrees)), gArr_ClassesEnvironment[classLoc][eced_Z]);
 	}
 	return true;
 }
 
-Player_CLassValidate(playerid, classid, max_classes = (sizeof(gArr_Classes) - 1)) {
+Player_ClassValidate(playerid, classid, max_classes = (sizeof(gArr_Classes) - 1)) {
 
 	new
 		tempClass = classid;
@@ -75,7 +71,7 @@ Player_CLassValidate(playerid, classid, max_classes = (sizeof(gArr_Classes) - 1)
 		// Reset the class selection when max_classes is exceeded
 		tempClass = 0;
 	}
-	if(gArr_Classes[classid][escd_IsVIP] && !BitFlag_Get(Player[playerid], epf_IsVIP)) {
+	if(gArr_Classes[classid][escd_IsVIP] && !BitFlag_Get(PlayerFlags[playerid], epf_VIP)) {
 
 		// Go to the next class when the player has selected a VIP class but isn't VIP
 		tempClass += 1;
@@ -88,7 +84,101 @@ Player_CLassValidate(playerid, classid, max_classes = (sizeof(gArr_Classes) - 1)
 	if(tempClass != classid) {
 
 		// Recursively redo the class checking
-		Class_Validate(playerid, classid);
+		Player_ClassValidate(playerid, classid);
 	}
-	Player[playerid][epd_CurrentClass] = tempClass;
+	Player_SetTemporaryClass(playerid, tempClass);
+}
+
+hook OnPlayerRequestSpawn(playerid) {
+
+	new
+		tmpCurrentClass = Player[playerid][epd_TempCurrentClass];
+
+	if(!IsPlayerNPC(playerid)) {
+
+		if(GetPlayerScore(playerid) < ClassTemporary_GetRequiredEXP(tmpCurrentClass)) {
+
+			return false;
+		}
+	}
+	Player_SetCurrentClass(playerid, Player_GetTemporaryClass(playerid));
+	Server_UpdateCNRCount(playerid);
+	return true;
+}
+
+ClassTemporary_GetRequiredEXP(tmpCurrentClass) {
+
+	return gArr_Classes[tmpCurrentClass][escd_Experience];
+}
+
+Server_UpdateCNRCount(playerid) {
+
+	if(Player_GetCurrentClass(playerid) != CLASS_NULL) {
+
+		if(ClassTemporary_LawEnforcement(playerid) && !ClassCurrent_LawEnforcement(playerid)) {
+
+			Server_IncreaseStat(STAT_COP_COUNT, 1);
+			Server_DecreaseStat(STAT_ROBBER_COUNT, 1);
+		}
+		else {
+
+			Server_IncreaseStat(STAT_ROBBER_COUNT, 1);
+			Server_DecreaseStat(STAT_COP_COUNT, 1);
+		}
+	}
+	else {
+
+		if(ClassTemporary_LawEnforcement(playerid)) {
+
+			Server_IncreaseStat(STAT_COP_COUNT, 1);
+		}
+		else {
+
+			Server_IncreaseStat(STAT_ROBBER_COUNT, 1);
+		}
+	}
+}
+
+Player_SetCurrentClass(playerid, classid) {
+
+	Player[playerid][epd_CurrentClass] = classid;
+}
+
+Player_GetCurrentClass(playerid) {
+
+	return Player[playerid][epd_CurrentClass];
+}
+
+Player_GetTemporaryClass(playerid) {
+
+	return Player[playerid][epd_TempCurrentClass];
+}
+
+Player_SetTemporaryClass(playerid, classid) {
+
+	Player[playerid][epd_TempCurrentClass] = classid;
+}
+
+ClassCurrent_LawEnforcement(playerid) {
+
+	switch(Player[playerid][epd_CurrentClass]) {
+
+		case CLASS_POLICE_OFFICER, CLASS_FBI, CLASS_SWAT, CLASS_CIA, CLASS_ARMY, CLASS_AIRPORT_GUARD: {
+			
+			return true;
+		}
+	}
+	return false;
+}
+
+ClassTemporary_LawEnforcement(playerid) {
+
+	switch(Player[playerid][epd_TempCurrentClass]) {
+
+		case CLASS_POLICE_OFFICER, CLASS_FBI, CLASS_SWAT, CLASS_CIA, CLASS_ARMY, CLASS_AIRPORT_GUARD: {
+			
+			return true;
+		}
+	}
+	return false;
 }

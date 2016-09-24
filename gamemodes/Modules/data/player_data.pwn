@@ -46,6 +46,13 @@
 #define MF_Player_GetCountryRegion(%0)		Player[%0][epd_HostRegion]
 #define MF_Player_IsProxyUser(%0)			Player[%0][epd_HostProxy]
 
+// Bitfalg MFs
+#define BitFlag_Get(%0,%1)            ((%0) & (%1))   // Returns zero (false) if the flag isn't set.
+#define BitFlag_On(%0,%1)             ((%0) |= (%1))  // Turn on a flag.
+#define BitFlag_Off(%0,%1)            ((%0) &= ~(%1)) // Turn off a flag.
+#define BitFlag_Toggle(%0,%1)         ((%0) ^= (%1))  // Toggle a flag (swap true/false).
+#define BitFlag_Set(%1,%2,%3)		  if(%3)((%1)|=(%2));else((%1)&=~(%2))
+
 /*
 *
 *		Data module: player_data.pwn
@@ -54,9 +61,10 @@
 
 enum E_PLAYER_FLAGS:(<<= 1) {
 
-	LoggedIn = 1,
-	Registered,
-	Spawned
+	epf_LoggedIn = 1,
+	epf_Registered,
+	epf_Spawned,
+	epf_VIP
 };
 new E_PLAYER_FLAGS:PlayerFlags[MAX_PLAYERS];
 
@@ -72,7 +80,9 @@ enum E_PLAYER_DATA {
 	epd_LastLoginDate[MAX_LEN_DATE],
 
 	epd_Admin,
+
 	epd_PlayTime,
+	epd_Experience,
 
 	// Lookup data
 	epd_HostName[60],
@@ -92,6 +102,7 @@ enum E_PLAYER_DATA {
 	epd_HostRetry,
 
 		// Class
+	epd_TempCurrentClass,
 	epd_CurrentClass
 };
 new Player[MAX_PLAYERS][E_PLAYER_DATA];
