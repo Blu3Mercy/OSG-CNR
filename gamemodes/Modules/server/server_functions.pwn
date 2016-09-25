@@ -23,6 +23,8 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Server_SetStat(type, value) {
+	
+	ServerInfo[type] = value;
 
 	if(type == STAT_TOTAL_REGISTERED_PLAYERS || type == STAT_PEAK_PLAYERS_ONLINE) {
 
@@ -34,7 +36,6 @@ Server_SetStat(type, value) {
 		
 		db_query(handle_id, query);
 	}
-	ServerInfo[type] = value;
 }
 
 Server_IncreaseStat(type, value) {
