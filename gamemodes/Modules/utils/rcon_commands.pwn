@@ -22,18 +22,17 @@
 */
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#include <YSI\y_hooks>
-
 /*
 *
 *		Utils: rcon commands
 *
 */
 
-hook OnRconCommand(cmd[]) {
+public OnRconCommand(cmd[]) {
 
-	if(!strcmp("createtables", cmd, true)) {
+	if(!strcmp(cmd, "createtables")) {
 
+		print("Creating tables...");
 		Database_SetupTables();
 	}
 	return true;
