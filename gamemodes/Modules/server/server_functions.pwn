@@ -24,18 +24,17 @@
 
 Server_SetStat(type, value) {
 
-	ServerInfo[type] = value;
-
-	new
-		query[95];
-
 	if(type == STAT_TOTAL_REGISTERED_PLAYERS || type == STAT_PEAK_PLAYERS_ONLINE) {
 
+		new
+			query[95];
 
 		format(query, sizeof(query), "UPDATE server_stats SET Registered_Players = %d, Peak_Players_Online = %d WHERE ID = %d", 
 			Server_GetStat(STAT_TOTAL_REGISTERED_PLAYERS), Server_GetStat(STAT_PEAK_PLAYERS_ONLINE), SERVER_DB_ID);
+		
+		db_query(handle_id, query);
 	}
-	db_query(handle_id, query);
+	ServerInfo[type] = value;
 }
 
 Server_IncreaseStat(type, value) {
