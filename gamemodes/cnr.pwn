@@ -327,6 +327,7 @@ new DB:handle_id;
 */
 
 #include "\modules\utils\string_utils.pwn"
+#include "\modules\utils\rcon_commands.pwn"
 
 /*
 *
@@ -427,8 +428,8 @@ Server_SetupDatabase() {
 	}
 	else {
 
+		// Database_SetupTables(); // This is done by a custom rcon command in rcon_commands.pwn (utils) to prevent it from creating the tables and default rows all the time.
 		print("Successfully created a connection to \""SERVER_MAIN_DATABASE"\".");
-		Database_SetupTables();
 	}
 	return true;
 }
@@ -438,32 +439,37 @@ Database_SetupTables() {
 	// Server stats table
 	db_query(handle_id, 
 		"CREATE TABLE IF NOT EXISTS `server_stats` ( \
+			`ID` INTEGER DEFAULT 1 NOT NULL, \
 			`Registered_Players` INTEGER DEFAULT 0 NOT NULL, \
 			`Peak_Players_Online` INTEGER DEFAULT 0 NOT NULL \
 		)"
 	);
 	// Default row
 	db_query(handle_id,
-		"INSERT INTO server_stats (ID, Registered_Players, Peak_Player_Online) VALUES ("#SERVER_DB_ID", 0, 0);"
+		"INSERT INTO server_stats (ID, Registered_Players, Peak_Players_Online) VALUES ("#SERVER_DB_ID", 0, 0)"
 	);
 
 	// Player table
 	db_query(handle_id, 
 		"CREATE TABLE IF NOT EXISTS `players` ( \
-			`ID` INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT,  \
+			`ID` INTEGER PRIMARY KEY AUTOINCREMENT,  \
 			`Username` VARCHAR(24) COLLATE NOCASE, \
 			`Password` VARCHAR(65), \
 			`IP` VARCHAR(16), \
 			`Admin` INTEGER DEFAULT 0 NOT NULL \
 		)"
 	);
+	// Default row
+	db_query(handle_id,
+		"INSERT INTO players (ID, Username, Password, IP, Admin) VALUES (1, 'None', '3D0053076EBC2918B0A24C221AF625B3229CA28348DA3FB1348FCD384F487F821B14A04E51D0793C741B58EACB65431402F38B982953EE306A6DE35DC6FEFE16', '127.0.0.1', 0)"
+	);
 
 	// Vehicle table
-	db_query(handle_id, 
+	/*db_query(handle_id, 
 		"CREATE TABLE IF NOT EXISTS `vehicles` (\
 			`ID` INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT \
-		)"
-	);
+		);"
+	);*/
 	return true;
 }
 
