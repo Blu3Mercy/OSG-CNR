@@ -160,7 +160,7 @@ timer PlayerTimer_Connection[2000](playerid, phaseid) {
 				query[60],
 				DBResult:db_Result;
 
-			format(query, sizeof(query), "SELECT * FROM ips_banned WHERE IP = '%q'", Player_GetIP(playerid));
+			format(query, sizeof(query), "SELECT * FROM ips_bans WHERE IP = '%q'", Player_GetIP(playerid));
 			db_Result = db_query(handle_id, query);
 
 			if(db_num_rows(db_Result)) {
@@ -247,7 +247,7 @@ timer PlayerTimer_Connection[2000](playerid, phaseid) {
 				query[56],
 				DBResult:db_Result;
 
-			format(query, sizeof(query), "SELECT * FROM players_banned WHERE Username = '%q'", Player_GetName(playerid));
+			format(query, sizeof(query), "SELECT * FROM players_bans WHERE Username = '%q'", Player_GetName(playerid));
 			db_Result = db_query(handle_id, query);
 
 			if(db_num_rows(db_Result)) {

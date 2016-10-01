@@ -476,8 +476,8 @@ as_fpublic:Database_SetupTables() {
 			`Username` VARCHAR(24) COLLATE NOCASE, \
 			`Password` VARCHAR(65), \
 			`IP` VARCHAR(16), \
-			`RegisterDate VARCHAR(36),` \
-			`LastLoginDate` VARCHAR(36), \
+			`RegisterDate` VARCHAR(36) COLLATE NOCASE, \
+			`LastLoginDate` VARCHAR(36) COLLATE NOCASE, \
 			`DisconnectReason` INTEGER DEFAULT 0, \
 			`Admin` INTEGER DEFAULT 0 NOT NULL, \
 			`PlayTime` INTEGER DEFAULT 0, \
@@ -490,12 +490,40 @@ as_fpublic:Database_SetupTables() {
 	print("inserting default rows and values...");
 	// Default row
 	db_query(handle_id,
-		"INSERT INTO players (ID, Username, Password, IP, Admin) VALUES (1, 'None', '3D0053076EBC2918B0A24C221AF625B3229CA28348DA3FB1348FCD384F487F821B14A04E51D0793C741B58EACB65431402F38B982953EE306A6DE35DC6FEFE16', '127.0.0.1', 0)"
+		"INSERT INTO players (ID, Username, Password, IP) VALUES (1, 'None', '3D0053076EBC2918B0A24C221AF625B3229CA28348DA3FB1348FCD384F487F821B14A04E51D0793C741B58EACB65431402F38B982953EE306A6DE35DC6FEFE16', '127.0.0.1')"
 	);
-	
+
 	print("default rows and values inserted.");
 
-	print("Unloading FS to prevent abuse...");
+	print("creating table \'ips_bans\' ...");
+
+	db_query(handle_id,
+		"CREATE TABLE IFN OT EXISTS `ips_bans` ( \
+			`IP` VARCHAR(16) PRIMARY KEY, \
+			`ExpireDays` INTEGER DEFAUL '99999', \
+			`BannedBy` VARCHAR(24), \
+			`BanReason` VARCHAR(50), \
+			`BanDate` VARCHAR(36) \
+		)"
+	);
+
+	print("\'ips_bans\' created.");
+
+	print("creating table \'players_bans\' ...");
+
+	db_query(handle_id,
+		"CREATE TABLE IFN OT EXISTS `players_bans` ( \
+			`ID` INTEGER PRIMARY KEY, \
+			`ExpireDays` INTEGER DEFAUL '99999', \
+			`BannedBy` VARCHAR(24), \
+			`BanReason` VARCHAR(50), \
+			`BanDate` VARCHAR(36), \
+			FOREIGN KEY (ID) REFERENCES players(ID) \
+		)"
+	);
+	print("\'players_bans\' created.");
+
+	print("\n\nUnloading FS to prevent abuse...");
 	SendRconCommand("unloadfs setuptables");
 	// Vehicle table
 	/*db_query(handle_id, 
