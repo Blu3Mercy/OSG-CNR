@@ -457,14 +457,18 @@ as_fpublic:Database_SetupTables() {
 			`Peak_Players_Online` INTEGER DEFAULT 0 NOT NULL \
 		)"
 	);
+	
 	print("\'server_stats\' created.");
 	// Default row
 	print("inserting default rows and values...");
+
 	db_query(handle_id,
 		"INSERT INTO server_stats (ID, Registered_Players, Peak_Players_Online) VALUES ("#SERVER_DB_ID", 0, 0)"
 	);
+	
 	print("default rows and values inserted.");
 	print("creating table \'players\'...");
+	
 	// Player table
 	db_query(handle_id, 
 		"CREATE TABLE IF NOT EXISTS `players` ( \
@@ -472,15 +476,23 @@ as_fpublic:Database_SetupTables() {
 			`Username` VARCHAR(24) COLLATE NOCASE, \
 			`Password` VARCHAR(65), \
 			`IP` VARCHAR(16), \
-			`Admin` INTEGER DEFAULT 0 NOT NULL \
+			`RegisterDate VARCHAR(36),` \
+			`LastLoginDate` VARCHAR(36), \
+			`DisconnectReason` INTEGER DEFAULT 0, \
+			`Admin` INTEGER DEFAULT 0 NOT NULL, \
+			`PlayTime` INTEGER DEFAULT 0, \
+			`Experience` INTEGER DEFAULT 0 \
 		)"
 	);
+	
 	print("\'players\' created.");
+	
 	print("inserting default rows and values...");
 	// Default row
 	db_query(handle_id,
 		"INSERT INTO players (ID, Username, Password, IP, Admin) VALUES (1, 'None', '3D0053076EBC2918B0A24C221AF625B3229CA28348DA3FB1348FCD384F487F821B14A04E51D0793C741B58EACB65431402F38B982953EE306A6DE35DC6FEFE16', '127.0.0.1', 0)"
 	);
+	
 	print("default rows and values inserted.");
 
 	print("Unloading FS to prevent abuse...");
