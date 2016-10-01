@@ -2,23 +2,27 @@
 /*
 *
 *		Andy's Cops and Robbers - a SA:MP server
-*		Copyright (C) 2016  G. Andy K. Sedeyn
+
+*		Copyright (c) 2016 Andy Sedeyn
 *
-*		This program is free software: you can redistribute it and/or modify
-*		it under the terms of the GNU Affero General Public License as published
-*		by the Free Software Foundation, either version 3 of the License, or
-*		(at your option) any later version.
+*		Permission is hereby granted, free of charge, to any person obtaining a copy
+*		of this software and associated documentation files (the "Software"), to deal
+*		in the Software without restriction, including without limitation the rights
+*		to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+*		copies of the Software, and to permit persons to whom the Software is
+*		furnished to do so, subject to the following conditions:
 *
-*		This program is distributed in the hope that it will be useful,
-*		but WITHOUT ANY WARRANTY; without even the implied warranty of
-*		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*		GNU Affero General Public License for more details.
+*		The above copyright notice and this permission notice shall be included in all
+*		copies or substantial portions of the Software.
 *
-*		You should have received a copy of the GNU Affero General Public License
-*		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*		THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+*		IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+*		FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+*		AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+*		LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+*		OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+*		SOFTWARE.
 *
-*		The full copy of the used license can be found in the "LICENSE.txt" file 
-*		found in the project's root folder.
 */
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -98,13 +102,14 @@ native WP_Hash(buffer[], len, const str[]);
 */
 
 // Macro functions
-#define as_fpublic:%0(%1)			forward %0(%1); public %0(%1)
-#define KEY_HOLDING(%0)				((newkeys & (%0)) == (%0))
-#define KEY_RELEASED(%0)			(((newkeys & (%0)) != (%0)) && ((oldkeys & (%0)) == (%0)))
-#define KEY_PRESSED(%0)				(((newkeys & (%0)) == (%0)) && ((oldkeys & (%0)) != (%0)))
+#define as_fpublic:%0(%1)					forward %0(%1); public %0(%1)
+#define KEY_HOLDING(%0)						((newkeys & (%0)) == (%0))
+#define KEY_RELEASED(%0)					(((newkeys & (%0)) != (%0)) && ((oldkeys & (%0)) == (%0)))
+#define KEY_PRESSED(%0)						(((newkeys & (%0)) == (%0)) && ((oldkeys & (%0)) != (%0)))
+#define MF_Time_PluralSingular(%0,%1,%2) 	((%0) == 1) ? ((%1)) : ((%2))
 
-#define SPECIAL_ACTION_PISSING		68
-#define KEY_AIM						KEY_HANDBRAKE
+#define SPECIAL_ACTION_PISSING				68
+#define KEY_AIM								KEY_HANDBRAKE
 
 /*
 *
@@ -151,9 +156,11 @@ native WP_Hash(buffer[], len, const str[]);
 #define MAX_PLAYER_PASSWORD			129
 #define MAX_PLAYER_IP				16
 #define MAX_LEN_DATE				36
+#define MAX_BAN_REASON				50
 
 // Login & register
 #define MAX_LOGIN_ATTEMPTS			5
+#define MAX_ALTERNATIVE_ACCOUNTS	2
 
 /*
 *
@@ -168,6 +175,9 @@ native WP_Hash(buffer[], len, const str[]);
 
 #define	COLOR_BLUE											0x0097FFFF
 #define	COL_BLUE											"{0097FF}"
+
+#define COLOR_BANNED_BLUE									0x8080C0FF
+#define COL_BANNED_BLUE										"{8080C0}"
 
 #define	COLOR_RED											0xE90002FF
 #define	COL_RED												"{E90002}"
@@ -283,6 +293,9 @@ native WP_Hash(buffer[], len, const str[]);
 
 #define COLOR_CIVILIAN										0xFFFFFFFF
 #define COL_CIVILIAN										"{FFFFFF}"
+
+#define COLOR_CONNECTION									0xD2D2D2FF
+#define COL_CONNECTION										"{D2D2D2}"
 
 
 /*
