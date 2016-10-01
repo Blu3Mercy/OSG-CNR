@@ -89,13 +89,6 @@ enum E_PLAYER_DATA {
 	epd_PlayTime,
 	epd_Experience,
 
-	// Lookup data
-	epd_HostName[60],
-	epd_HostISP[60],
-	epd_HostCode[3],
-	epd_HostCountry[45],
-	epd_HostRegion[43],
-	epd_HostProxy,
 
 	// Session data that are not booleans
 
@@ -103,6 +96,12 @@ enum E_PLAYER_DATA {
 	epd_LoginAttempts,
 
 		// Lookup data
+	epd_HostName[60],
+	epd_HostISP[60],
+	epd_HostCode[3],
+	epd_HostCountry[45],
+	epd_HostRegion[43],
+	epd_HostProxy,
 	epd_HostSession,
 	epd_HostRetry,
 
