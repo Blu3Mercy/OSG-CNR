@@ -498,7 +498,7 @@ as_fpublic:Database_SetupTables() {
 	print("creating table \'ips_bans\' ...");
 
 	db_query(handle_id,
-		"CREATE TABLE IFN OT EXISTS `ips_bans` ( \
+		"CREATE TABLE IF NOT EXISTS `ips_bans` ( \
 			`IP` VARCHAR(16) PRIMARY KEY, \
 			`ExpireDays` INTEGER DEFAUL '99999', \
 			`BannedBy` VARCHAR(24), \
@@ -512,7 +512,7 @@ as_fpublic:Database_SetupTables() {
 	print("creating table \'players_bans\' ...");
 
 	db_query(handle_id,
-		"CREATE TABLE IFN OT EXISTS `players_bans` ( \
+		"CREATE TABLE IF NOT EXISTS `players_bans` ( \
 			`ID` INTEGER PRIMARY KEY, \
 			`ExpireDays` INTEGER DEFAUL '99999', \
 			`BannedBy` VARCHAR(24), \
@@ -525,12 +525,6 @@ as_fpublic:Database_SetupTables() {
 
 	print("\n\nUnloading FS to prevent abuse...");
 	SendRconCommand("unloadfs setuptables");
-	// Vehicle table
-	/*db_query(handle_id, 
-		"CREATE TABLE IF NOT EXISTS `vehicles` (\
-			`ID` INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT \
-		);"
-	);*/
 	return true;
 }
 
