@@ -69,11 +69,15 @@ hook OnPlayerConnect(playerid) {
 
 Player_GetAllAccounts(playerid) {
 
+	printf("Player_GetAllAccounts[MF_Player_GetName(%d)] = %s", playerid, MF_Player_GetName(playerid));
+	printf("Player_GetAllAccounts[MF_Player_GetIP(%d)] = %s", playerid, MF_Player_GetIP(playerid));
+
 	new
 		query[150],
 		DBResult:db_Result;
 
-	format(query, sizeof(query), "SELECT Username, LastLogin FROM players WHERE IP = '%q' AND Username != '%q' COLLATE NOCASE", Player_GetIP(playerid), Player_GetName(playerid));
+	format(query, sizeof(query), "SELECT Username, LastLoginDate FROM players WHERE IP = '%q' AND Username != '%q' COLLATE NOCASE", MF_Player_GetIP(playerid), MF_Player_GetName(playerid));
+	printf("OWN PRINT: %s", query);
 	db_Result = db_query(handle_id, query);
 
 	new
@@ -114,6 +118,8 @@ timer PlayerTimer_Connection[2000](playerid, phaseid) {
 
 		case PHASE_ESTABLISH_CONNECTION: {
 
+			Player_LoadInitData(playerid);
+
 			new
 				camPos = Player[playerid][epd_CameraPosition];
 
@@ -134,12 +140,10 @@ timer PlayerTimer_Connection[2000](playerid, phaseid) {
 			);
 			// GetPlayerCameraPos(playerid, camPosX, camPosY, camPosZ);
 
-			PlayAudioStreamForPlayer(playerid, gArr_RadioStations[random(sizeof(gArr_RadioStations))][ersd_URL]);
+			// PlayAudioStreamForPlayer(playerid, gArr_RadioStations[random(sizeof(gArr_RadioStations))][ersd_URL]);
 			Player_SendMessage(playerid, COLOR_GREY, "--------------------------------------------------------------------------------------------------------");
 			Player_SendMessage(playerid, COLOR_RED, "Warning! "COL_WHITE"The content on this server may be considered as explicit material.");
 			Player_SendMessage(playerid, COLOR_GREY, "--------------------------------------------------------------------------------------------------------");
-		
-			Server_ClearChatForPlayer(playerid);
 
 			SetPlayerColor(playerid, COLOR_CONNECTION);
 			if(Player_GetDisconnectReason(playerid) == DISCONNECT_REASON_TIMEOUT || Player_GetDisconnectReason(playerid) == DISCONNECT_REASON_RESTART) {
@@ -160,7 +164,7 @@ timer PlayerTimer_Connection[2000](playerid, phaseid) {
 				query[60],
 				DBResult:db_Result;
 
-			format(query, sizeof(query), "SELECT * FROM ips_bans WHERE IP = '%q'", Player_GetIP(playerid));
+			format(query, sizeof(query), "SELECT * FROM ips_bans WHERE IP = '%q'", MF_Player_GetIP(playerid));
 			db_Result = db_query(handle_id, query);
 
 			if(db_num_rows(db_Result)) {
@@ -233,7 +237,7 @@ timer PlayerTimer_Connection[2000](playerid, phaseid) {
 							""COL_BANNED_BLUE"Who banned my IP?\n"COL_WHITE"%s\n\n"COL_BANNED_BLUE"Why was my IP banned?\n"COL_WHITE"%s\n\n"COL_BANNED_BLUE"When was my IP banned?\n"COL_WHITE"%s\n\nThis ban has been lifted. Please be more careful next time.\n\n",
 							"Ok", "", bannedby, bannedreason, bandate
 						);
-						Admin_SendTaggedMessage(2, TYPE_ALERT, "IP %s has been unbanned [Player: %p (ID: %d)] (ban expired).", Player_GetIP(playerid), playerid, playerid);
+						Admin_SendTaggedMessage(2, TYPE_ALERT, "IP %s has been unbanned [Player: %p (ID: %d)] (ban expired).", MF_Player_GetIP(playerid), playerid, playerid);
 					}
 				}
 			}
@@ -247,7 +251,7 @@ timer PlayerTimer_Connection[2000](playerid, phaseid) {
 				query[56],
 				DBResult:db_Result;
 
-			format(query, sizeof(query), "SELECT * FROM players_bans WHERE Username = '%q'", Player_GetName(playerid));
+			format(query, sizeof(query), "SELECT * FROM players_bans WHERE ID = %d", Player[playerid][epd_ID]);
 			db_Result = db_query(handle_id, query);
 
 			if(db_num_rows(db_Result)) {
@@ -326,8 +330,21 @@ timer PlayerTimer_Connection[2000](playerid, phaseid) {
 
 			// Player check
 			Player_LookupIP(playerid);
-			Player_LoadInitData(playerid);
+			Player_ShowLoginRegister(playerid);
 		}
+	}
+	return true;
+}
+
+Player_ShowLoginRegister(playerid) {
+
+	if(BitFlag_Get(PlayerFlags[playerid], epf_Registered)) {
+
+		Dialog_Show(playerid, dia_Login, DIALOG_STYLE_PASSWORD, COMMUNITY_NAME" - Login", "Enter your password to continue:", "Login", "Quit");
+	}
+	else {
+
+		Dialog_Show(playerid, dia_Register, DIALOG_STYLE_PASSWORD, COMMUNITY_NAME" - Register", "Enter your desired password to continue:", "Register", "Quit");
 	}
 	return true;
 }
@@ -365,13 +382,17 @@ Player_SetDefaultBits(playerid) {
 
 Player_SetDefaultVars(playerid) {
 
-	// Reset all data
+	/*
+	*
+	*	Reset player data to avoid data collisions
+	*
+	*/
 	Player[playerid] = ResetPlayer;
 
 	Server_IncreaseStat(STAT_PLAYERS_CONNECTED, 1);
 
 	GetPlayerIp(playerid, Player[playerid][epd_IP], MAX_PLAYER_IP);
-	GetPlayerName(playerid, Player[playerid][epd_Username], MAX_PLAYER_IP);
+	GetPlayerName(playerid, Player[playerid][epd_Username], MAX_PLAYER_NAME);
 	return true;
 }
 
@@ -389,7 +410,7 @@ Player_LookupIP(playerid) {
 	session_index++;
 	Player[playerid][epd_HostSession] = session_index;
 
-	format(query, sizeof(query), "lookupffs.com/api.php?ip=%s", Player_GetIP(playerid));
+	format(query, sizeof(query), "lookupffs.com/api.php?ip=%s", MF_Player_GetIP(playerid));
 	HTTP(session_index, HTTP_GET, query, "", "Player_OnLookupResponse");
 	return true;
 }
@@ -473,18 +494,21 @@ Player_LoadInitData(playerid) {
 		query[90],
 		DBResult:db_Result;
 
-	format(query, sizeof(query), "SELECT ID, Password FROM players WHERE Username = '%q'", Player[playerid][epd_Username]);
+	format(query, sizeof(query), "SELECT ID, Password, LastLoginDate, DisconnectReason FROM players WHERE Username = '%q'", MF_Player_GetName(playerid));
 	db_Result = db_query(handle_id, query);
 
 	if(db_num_rows(db_Result)) {
 
 		Player[playerid][epd_ID] = db_get_field_assoc_int(db_Result, "ID");
 		db_get_field_assoc(db_Result, "Password", Player[playerid][epd_Password], MAX_PLAYER_PASSWORD);
-		Dialog_Show(playerid, dia_Login, DIALOG_STYLE_PASSWORD, COMMUNITY_NAME" - Login", "Enter your password to continue:", "Login", "Quit");
+		db_get_field_assoc(db_Result, "LastLoginDate", Player[playerid][epd_LastLoginDate], MAX_LEN_DATE);
+		Player[playerid][epd_DisconnectReason] = db_get_field_assoc_int(db_Result, "DisconnectReason");
+
+		BitFlag_On(PlayerFlags[playerid], epf_Registered);
 	}
 	else {
 
-		Dialog_Show(playerid, dia_Register, DIALOG_STYLE_PASSWORD, COMMUNITY_NAME" - Register", "Enter your desired password to continue:", "Register", "Quit");
+		BitFlag_Off(PlayerFlags[playerid], epf_Registered);
 	}
 	db_free_result(db_Result);
 	return true;
@@ -529,6 +553,9 @@ Player_LoadAllData(playerid) {
 	if(db_num_rows(db_Result)) {
 
 		Player[playerid][epd_Admin] = db_get_field_assoc_int(db_Result, "Admin");
+
+		Player[playerid][epd_PlayTime] = db_get_field_assoc_int(db_Result, "PlayTime");
+		Player[playerid][epd_Experience] = db_get_field_assoc_int(db_Result, "Experience");
 	}
 	db_free_result(db_Result);
 	return true;
@@ -555,7 +582,7 @@ Dialog:dia_Register(playerid, response, listitem, inputtext[]) {
 	new
 		query[256];
 
-	format(query, sizeof(query), "INSERT INTO players (Username, Password, IP) VALUES ('%q', '%q', '%q')", Player_GetName(playerid), Player[playerid][epd_Password], Player_GetIP(playerid));
+	format(query, sizeof(query), "INSERT INTO players (Username, Password, IP) VALUES ('%q', '%q', '%q')", MF_Player_GetName(playerid), Player[playerid][epd_Password], MF_Player_GetIP(playerid));
 	db_query(handle_id, query);
 
 	new
@@ -725,7 +752,6 @@ hook OnPlayerDisconnect(playerid, reason) {
 	}
 	Server_DecreaseStat(STAT_PLAYERS_CONNECTED, 1);
 
-
 	Player_SaveDisconnectData(playerid);
 
 	switch(reason) {
@@ -784,8 +810,8 @@ Player_SaveDisconnectData(playerid) {
 	new
 		query[90];
 
-	format(query, sizeof(query), "UPDATE players SET DisconnectReason = %d, PlayTime = %d WHERE ID = %d",
-		Player[playerid][epd_LastLoginDate], Player[playerid][epd_DisconnectReason], Player[playerid][epd_PlayTime]
+	format(query, sizeof(query), "UPDATE players SET PlayTime = %d WHERE ID = %d",
+		Player[playerid][epd_PlayTime], Player[playerid][epd_ID]
 	);
 	db_query(handle_id, query);
 }

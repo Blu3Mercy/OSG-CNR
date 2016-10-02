@@ -39,8 +39,10 @@
 */
 
 // General MFs
-#define MF_IsAdmin(%0)		Player[%0][epd_Admin]
-#define MF_PlayTime(%0)		Player[%0][epd_PlayTime]
+#define MF_Player_GetName(%0)		Player[%0][epd_Username]
+#define MF_Player_GetIP(%0)			Player[%0][epd_IP]
+#define MF_Player_IsAdmin(%0)		Player[%0][epd_Admin]
+#define MF_Player_PlayTime(%0)		Player[%0][epd_PlayTime]	
 
 // Lookup MFs
 #define MF_Player_GetHost(%0)				Player[%0][epd_HostName]
@@ -74,7 +76,12 @@ new E_PLAYER_FLAGS:PlayerFlags[MAX_PLAYERS];
 
 enum E_PLAYER_DATA {
 
-	// Database data
+	/*
+	*
+	*	Database data
+	*
+	*/
+
 	epd_ID,
 	epd_Username[MAX_PLAYER_NAME],
 	epd_Password[MAX_PLAYER_PASSWORD],
@@ -90,9 +97,12 @@ enum E_PLAYER_DATA {
 	epd_Experience,
 
 
-	// Session data that are not booleans
-
-	bool:epd_LoggedIn,
+	/*
+	*
+	*	Session data
+	*		(non-boolean: all boolean vars must be put in the FLAGS enum)
+	*
+	*/
 	epd_LoginAttempts,
 
 		// Lookup data
