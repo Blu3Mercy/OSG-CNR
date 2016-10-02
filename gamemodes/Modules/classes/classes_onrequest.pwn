@@ -107,6 +107,8 @@ hook OnPlayerRequestSpawn(playerid) {
 	}
 	Player_SetCurrentClass(playerid, Player_GetTemporaryClass(playerid));
 	Server_UpdateCNRCount(playerid);
+
+	BitFlag_On(PlayerFlags[playerid], epf_Spawned);
 	return true;
 }
 

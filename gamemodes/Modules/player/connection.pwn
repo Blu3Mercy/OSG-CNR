@@ -69,15 +69,11 @@ hook OnPlayerConnect(playerid) {
 
 Player_GetAllAccounts(playerid) {
 
-	printf("Player_GetAllAccounts[MF_Player_GetName(%d)] = %s", playerid, MF_Player_GetName(playerid));
-	printf("Player_GetAllAccounts[MF_Player_GetIP(%d)] = %s", playerid, MF_Player_GetIP(playerid));
-
 	new
 		query[150],
 		DBResult:db_Result;
 
 	format(query, sizeof(query), "SELECT Username, LastLoginDate FROM players WHERE IP = '%q' AND Username != '%q' COLLATE NOCASE", MF_Player_GetIP(playerid), MF_Player_GetName(playerid));
-	printf("OWN PRINT: %s", query);
 	db_Result = db_query(handle_id, query);
 
 	new
@@ -491,7 +487,7 @@ Player_OnLookupComplete(playerid) {
 Player_LoadInitData(playerid) {
 
 	new
-		query[90],
+		query[128],
 		DBResult:db_Result;
 
 	format(query, sizeof(query), "SELECT ID, Password, LastLoginDate, DisconnectReason FROM players WHERE Username = '%q'", MF_Player_GetName(playerid));
@@ -563,6 +559,9 @@ Player_LoadAllData(playerid) {
 		Player[playerid][epd_Experience] = db_get_field_assoc_int(db_Result, "Experience");
 	}
 	db_free_result(db_Result);
+
+	BitFlag_On(PlayerFlags[playerid], epf_LoggedIn);
+	TogglePlayerSpectating(playerid, false);
 	return true;
 }
 
@@ -597,6 +596,10 @@ Dialog:dia_Register(playerid, response, listitem, inputtext[]) {
 	Player[playerid][epd_ID] = db_get_field_int(db_result);
 
 	db_free_result(db_result);
+
+	BitFlag_On(PlayerFlags[playerid], epf_LoggedIn);
+	BitFlag_On(PlayerFlags[playerid], epf_Registered);
+	TogglePlayerSpectating(playerid, false);
 	return true;
 }
 
