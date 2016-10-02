@@ -474,7 +474,7 @@ as_fpublic:Database_SetupTables() {
 		"CREATE TABLE IF NOT EXISTS `players` ( \
 			`ID` INTEGER PRIMARY KEY AUTOINCREMENT,  \
 			`Username` VARCHAR(24) COLLATE NOCASE, \
-			`Password` VARCHAR(65), \
+			`Password` VARCHAR(129), \
 			`IP` VARCHAR(16), \
 			`RegisterDate` VARCHAR(36) COLLATE NOCASE, \
 			`LastLoginDate` VARCHAR(36) COLLATE NOCASE, \
@@ -484,7 +484,6 @@ as_fpublic:Database_SetupTables() {
 			`Experience` INTEGER DEFAULT 0 \
 		)"
 	);
-	
 	print("\'players\' created.");
 	
 	print("inserting default rows and values...");
@@ -500,7 +499,7 @@ as_fpublic:Database_SetupTables() {
 	db_query(handle_id,
 		"CREATE TABLE IF NOT EXISTS `ips_bans` ( \
 			`IP` VARCHAR(16) PRIMARY KEY, \
-			`ExpireDays` INTEGER DEFAUL '99999', \
+			`ExpireDays` INTEGER DEFAULT '99999', \
 			`BannedBy` VARCHAR(24), \
 			`BanReason` VARCHAR(50), \
 			`BanDate` VARCHAR(36) \
@@ -514,7 +513,7 @@ as_fpublic:Database_SetupTables() {
 	db_query(handle_id,
 		"CREATE TABLE IF NOT EXISTS `players_bans` ( \
 			`ID` INTEGER PRIMARY KEY, \
-			`ExpireDays` INTEGER DEFAUL '99999', \
+			`ExpireDays` INTEGER DEFAULT '99999', \
 			`BannedBy` VARCHAR(24), \
 			`BanReason` VARCHAR(50), \
 			`BanDate` VARCHAR(36), \
