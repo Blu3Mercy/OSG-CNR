@@ -2,23 +2,27 @@
 /*
 *
 *		Andy's Cops and Robbers - a SA:MP server
-*		Copyright (C) 2016  G. Andy K. Sedeyn
+
+*		Copyright (c) 2016 Andy Sedeyn
 *
-*		This program is free software: you can redistribute it and/or modify
-*		it under the terms of the GNU Affero General Public License as published
-*		by the Free Software Foundation, either version 3 of the License, or
-*		(at your option) any later version.
+*		Permission is hereby granted, free of charge, to any person obtaining a copy
+*		of this software and associated documentation files (the "Software"), to deal
+*		in the Software without restriction, including without limitation the rights
+*		to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+*		copies of the Software, and to permit persons to whom the Software is
+*		furnished to do so, subject to the following conditions:
 *
-*		This program is distributed in the hope that it will be useful,
-*		but WITHOUT ANY WARRANTY; without even the implied warranty of
-*		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*		GNU Affero General Public License for more details.
+*		The above copyright notice and this permission notice shall be included in all
+*		copies or substantial portions of the Software.
 *
-*		You should have received a copy of the GNU Affero General Public License
-*		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*		THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+*		IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+*		FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+*		AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+*		LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+*		OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+*		SOFTWARE.
 *
-*		The full copy of the used license can be found in the "LICENSE.txt" file 
-*		found in the project's root folder.
 */
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -35,8 +39,10 @@
 */
 
 // General MFs
-#define MF_IsAdmin(%0)		Player[%0][epd_Admin]
-#define MF_PlayTime(%0)		Player[%0][epd_PlayTime]
+#define MF_Player_GetName(%0)		Player[%0][epd_Username]
+#define MF_Player_GetIP(%0)			Player[%0][epd_IP]
+#define MF_Player_IsAdmin(%0)		Player[%0][epd_Admin]
+#define MF_Player_PlayTime(%0)		Player[%0][epd_PlayTime]	
 
 // Lookup MFs
 #define MF_Player_GetHost(%0)				Player[%0][epd_HostName]
@@ -70,7 +76,12 @@ new E_PLAYER_FLAGS:PlayerFlags[MAX_PLAYERS];
 
 enum E_PLAYER_DATA {
 
-	// Database data
+	/*
+	*
+	*	Database data
+	*
+	*/
+
 	epd_ID,
 	epd_Username[MAX_PLAYER_NAME],
 	epd_Password[MAX_PLAYER_PASSWORD],
@@ -78,35 +89,68 @@ enum E_PLAYER_DATA {
 
 	epd_RegisterDate[MAX_LEN_DATE],
 	epd_LastLoginDate[MAX_LEN_DATE],
+	epd_DisconnectReason,
 
 	epd_Admin,
 
 	epd_PlayTime,
 	epd_Experience,
 
-	// Lookup data
+
+	/*
+	*
+	*	Session data
+	*		(non-boolean: all boolean vars must be put in the FLAGS enum)
+	*
+	*/
+	epd_LoginAttempts,
+
+		// Lookup data
 	epd_HostName[60],
 	epd_HostISP[60],
 	epd_HostCode[3],
 	epd_HostCountry[45],
 	epd_HostRegion[43],
 	epd_HostProxy,
-
-	// Session data that are not booleans
-
-	bool:epd_LoggedIn,
-	epd_LoginAttempts,
-
-		// Lookup data
 	epd_HostSession,
 	epd_HostRetry,
 
 		// Class
 	epd_TempCurrentClass,
-	epd_CurrentClass
+	epd_CurrentClass,
+
+		// Camera positions
+	epd_CameraPosition
 };
 new Player[MAX_PLAYERS][E_PLAYER_DATA];
 new ResetPlayer[E_PLAYER_DATA];
+
+enum {
+
+	/*
+	*
+	*	Connection phases
+	*
+	*/
+
+	PHASE_ESTABLISH_CONNECTION,
+	PHASE_VALIDATE_CONNECTION,
+	PHASE_VALIDATE_ACCOUNT,
+	PHASE_ENTER_GAME,
+
+	/*
+	*
+	*	Disconnect reasons
+	*
+	*/
+
+	DISCONNECT_REASON_UNKNOWN,
+	DISCONNECT_REASON_TIMEOUT,
+	DISCONNECT_REASON_RESTART,
+	DISCONNECT_REASON_KICKBAN,
+	DISCONNECT_REASON_QUIT
+
+};
 
 /*
 *

@@ -2,23 +2,27 @@
 /*
 *
 *		Andy's Cops and Robbers - a SA:MP server
-*		Copyright (C) 2016  G. Andy K. Sedeyn
+
+*		Copyright (c) 2016 Andy Sedeyn
 *
-*		This program is free software: you can redistribute it and/or modify
-*		it under the terms of the GNU Affero General Public License as published
-*		by the Free Software Foundation, either version 3 of the License, or
-*		(at your option) any later version.
+*		Permission is hereby granted, free of charge, to any person obtaining a copy
+*		of this software and associated documentation files (the "Software"), to deal
+*		in the Software without restriction, including without limitation the rights
+*		to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+*		copies of the Software, and to permit persons to whom the Software is
+*		furnished to do so, subject to the following conditions:
 *
-*		This program is distributed in the hope that it will be useful,
-*		but WITHOUT ANY WARRANTY; without even the implied warranty of
-*		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*		GNU Affero General Public License for more details.
+*		The above copyright notice and this permission notice shall be included in all
+*		copies or substantial portions of the Software.
 *
-*		You should have received a copy of the GNU Affero General Public License
-*		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*		THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+*		IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+*		FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+*		AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+*		LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+*		OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+*		SOFTWARE.
 *
-*		The full copy of the used license can be found in the "LICENSE.txt" file 
-*		found in the project's root folder.
 */
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -98,7 +102,7 @@ stock va_formatex(output[], size = sizeof(output), const fmat[], va_:STATIC_ARGS
 */
 
 
-SendMessageToPlayer(playerid, colour, string[]) {
+Player_SendMessage(playerid, colour, string[]) {
 
 	if(strlen(string) > 114) {
 
@@ -136,10 +140,10 @@ SendMessageToAll(colour, string[]) {
 	return true;
 }
 
-SendFormattedMessageToPlayer(playerid, colour, fmat[], va_args<>) {
+Player_SendFormattedMessage(playerid, colour, fmat[], va_args<>) {
 
 	va_formatex(formatex_string, sizeof(formatex_string), fmat, va_start<3>);
-	SendMessageToPlayer(playerid, colour, formatex_string);
+	Player_SendMessage(playerid, colour, formatex_string);
 	return true;
 }
 
@@ -150,20 +154,20 @@ SendFormattedMessageToAll(colour, fmat[], va_args<>) {
 	return true;
 }
 
-/*SendFormattedMessageToAdmin(level, colour, fmat[], va_args<>) {
+Admin_SendFormattedMessage(level, colour, fmat[], va_args<>) {
 
 	va_formatex(formatex_string, sizeof(formatex_string), fmat, va_start<3>);
 	foreach(new i : Player) {
 
-		if(Player[i][AdminLevel] >= level) {
+		if(Player[i][epd_Admin] >= level) {
 
-			SendMessageToPlayer(i, colour, formatex_string);
+			Player_SendMessage(i, colour, formatex_string);
 		}
 	}
 	return true;
 }
 
-SendNearbyMessage(playerid, Float:radius, colour, fmat[], va_args<>) {
+/*SendNearbyMessage(playerid, Float:radius, colour, fmat[], va_args<>) {
 
 	va_formatex(formatex_string, sizeof(formatex_string), fmat, va_start<4>);
 	foreach(new i : Player) {
@@ -174,9 +178,9 @@ SendNearbyMessage(playerid, Float:radius, colour, fmat[], va_args<>) {
 		}
 	}
 	return true;
-}*/
+}
 
-stock SendVehicleMessage(vehicleid, colour, fmat[], va_args<>) {
+SendVehicleMessage(vehicleid, colour, fmat[], va_args<>) {
 
 	va_formatex(formatex_string, sizeof(formatex_string), fmat, va_start<3>);
 	foreach(new i : Player) if(GetPlayerVehicleID(i) == vehicleid) {
@@ -186,7 +190,7 @@ stock SendVehicleMessage(vehicleid, colour, fmat[], va_args<>) {
 	return true;
 }
 
-stock SendPoliceRadioMessage(factionid, colour, fmat[], va_args<>) {
+SendPoliceRadioMessage(factionid, colour, fmat[], va_args<>) {
 
 	va_formatex(formatex_string, sizeof(formatex_string), fmat, va_start<3>);
 	foreach(new i : Player) if(Player[i][Member] == factionid) {
@@ -197,7 +201,7 @@ stock SendPoliceRadioMessage(factionid, colour, fmat[], va_args<>) {
 }
 
 // This function sends the radio message to other departments
-stock SendPoliceRadioMessageToPolice(colour, fmat[], va_args<>) {
+SendPoliceRadioMessageToPolice(colour, fmat[], va_args<>) {
 
 	// Send a police radio message to other police factions
 	va_formatex(formatex_string, sizeof(formatex_string), fmat, va_start<3>);
@@ -206,7 +210,7 @@ stock SendPoliceRadioMessageToPolice(colour, fmat[], va_args<>) {
 		SendMessageToPlayer(i, colour, formatex_string);
 	}
 	return true;
-}
+}*/
 
 #define TYPE_ERROR      0
 #define TYPE_SYNTAX     1
@@ -216,38 +220,38 @@ stock SendPoliceRadioMessageToPolice(colour, fmat[], va_args<>) {
 #define TYPE_ALERT      5
 #define TYPE_ACHAT      6
 
-SendTaggedMessageToPlayer(playerid, msg_type, fmat[], va_args<>) {
+Player_SendTaggedMessage(playerid, msg_type, fmat[], va_args<>) {
 
 	va_formatex(formatex_string, sizeof(formatex_string), fmat, va_start<3>);
 	switch(msg_type) {
 
 		case TYPE_ERROR: {
 
-			SendFormattedMessageToPlayer(playerid, COLOR_WHITE, "* %CError: %C%s", COLOR_GREY, COLOR_WHITE, formatex_string);
+			Player_SendFormattedMessage(playerid, COLOR_WHITE, "* %CError: %C%s", COLOR_GREY, COLOR_WHITE, formatex_string);
 		}
 		case TYPE_SYNTAX: {
 
-			SendFormattedMessageToPlayer(playerid, COLOR_WHITE, "* %CUsage: %C%s", COLOR_BLUE, COLOR_WHITE, formatex_string);
+			Player_SendFormattedMessage(playerid, COLOR_WHITE, "* %CUsage: %C%s", COLOR_BLUE, COLOR_WHITE, formatex_string);
 		}
 		case TYPE_SERVER: {
 
-			SendFormattedMessageToPlayer(playerid, COLOR_WHITE, "* %CServer: %C%s", COLOR_ORANGE, COLOR_WHITE, formatex_string);
+			Player_SendFormattedMessage(playerid, COLOR_WHITE, "* %CServer: %C%s", COLOR_ORANGE, COLOR_WHITE, formatex_string);
 		}
 		case TYPE_INFO: {
 
-			SendFormattedMessageToPlayer(playerid, COLOR_WHITE, "* %CInfo: %C%s", COLOR_GREEN, COLOR_WHITE, formatex_string);
+			Player_SendFormattedMessage(playerid, COLOR_WHITE, "* %CInfo: %C%s", COLOR_GREEN, COLOR_WHITE, formatex_string);
 		}
 		case TYPE_ADMIN: {
 
-			SendFormattedMessageToPlayer(playerid, COLOR_WHITE, "* %CAdmin: %C%s", COLOR_RED, COLOR_WHITE, formatex_string);
+			Player_SendFormattedMessage(playerid, COLOR_WHITE, "* %CAdmin: %C%s", COLOR_RED, COLOR_WHITE, formatex_string);
 		}
 		case TYPE_ALERT: {
 
-			SendFormattedMessageToPlayer(playerid, COLOR_WHITE, "* %C[!]: %C%s", COLOR_RED, COLOR_WHITE, formatex_string);
+			Player_SendFormattedMessage(playerid, COLOR_WHITE, "* %C[!]: %C%s", COLOR_RED, COLOR_WHITE, formatex_string);
 		}
 		case TYPE_ACHAT: {
 
-			SendFormattedMessageToPlayer(playerid, COLOR_G_ACHAT, "* [Admin Chat]: %s", formatex_string);
+			Player_SendFormattedMessage(playerid, COLOR_G_ACHAT, "* [Admin Chat]: %s", formatex_string);
 		}
 	}
 	return true;
@@ -286,42 +290,42 @@ SendTaggedMessageToAll(msg_type, fmat[], va_args<>) {
 	return true;
 }
 
-/*SendTaggedMessageToAdmins(level, msg_type, fmat[], va_args<>) {
+Admin_SendTaggedMessage(level, msg_type, fmat[], va_args<>) {
 
 	va_formatex(formatex_string, sizeof(formatex_string), fmat, va_start<3>);
 	switch(msg_type) {
 
 		case TYPE_ERROR: {
 
-			SendFormattedMessageToAdmin(level, COLOR_WHITE, "* %CError: %C%s", COLOR_GREY, COLOR_WHITE, formatex_string);
+			Admin_SendFormattedMessage(level, COLOR_WHITE, "* %CError: %C%s", COLOR_GREY, COLOR_WHITE, formatex_string);
 		}
 		case TYPE_SYNTAX: {
 
-			SendFormattedMessageToAdmin(level, COLOR_WHITE, "* %CUsage: %C%s", COLOR_BLUE, COLOR_WHITE, formatex_string);
+			Admin_SendFormattedMessage(level, COLOR_WHITE, "* %CUsage: %C%s", COLOR_BLUE, COLOR_WHITE, formatex_string);
 		}
 		case TYPE_SERVER: {
 
-			SendFormattedMessageToAdmin(level, COLOR_WHITE, "* %CServer: %C%s", COLOR_ORANGE, COLOR_WHITE, formatex_string);
+			Admin_SendFormattedMessage(level, COLOR_WHITE, "* %CServer: %C%s", COLOR_ORANGE, COLOR_WHITE, formatex_string);
 		}
 		case TYPE_INFO: {
 
-			SendFormattedMessageToAdmin(level, COLOR_WHITE, "* %CInfo: %C%s", COLOR_GREEN, COLOR_WHITE, formatex_string);
+			Admin_SendFormattedMessage(level, COLOR_WHITE, "* %CInfo: %C%s", COLOR_GREEN, COLOR_WHITE, formatex_string);
 		}
 		case TYPE_ADMIN: {
 
-			SendFormattedMessageToAdmin(level, COLOR_WHITE, "* %CAdmin: %C%s", COLOR_RED, COLOR_WHITE, formatex_string);
+			Admin_SendFormattedMessage(level, COLOR_WHITE, "* %CAdmin: %C%s", COLOR_RED, COLOR_WHITE, formatex_string);
 		}
 		case TYPE_ALERT: {
 
-			SendFormattedMessageToAdmin(level, COLOR_WHITE, "* %C[!]: %C%s", COLOR_RED, COLOR_WHITE, formatex_string);
+			Admin_SendFormattedMessage(level, COLOR_WHITE, "* %C[!]: %C%s", COLOR_RED, COLOR_WHITE, formatex_string);
 		}
 		case TYPE_ACHAT: {
 
-			SendFormattedMessageToAdmin(level, COLOR_G_ACHAT, "* [Admin Chat]: %s", formatex_string);
+			Admin_SendFormattedMessage(level, COLOR_G_ACHAT, "* [Admin Chat]: %s", formatex_string);
 		}
 	}
 	return true;
-}*/
+}
 
 /*IsNumeric(const str[]) {
 
