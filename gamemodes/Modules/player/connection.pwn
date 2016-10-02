@@ -519,7 +519,12 @@ Dialog:dia_Login(playerid, response, listitem, inputtext[]) {
 	if(!response) 
 		return Kick(playerid);
 
-	if(strcmp(Player[playerid][epd_Password], inputtext)) {
+	new
+		hashpass[MAX_PLAYER_PASSWORD];
+
+	WP_Hash(hashpass, sizeof(hashpass), inputtext);
+
+	if(strcmp(Player[playerid][epd_Password], hashpass)) {
 
 		Player_LoadAllData(playerid);
 	}
@@ -577,7 +582,7 @@ Dialog:dia_Register(playerid, response, listitem, inputtext[]) {
 		return Dialog_Show(playerid, dia_Register, DIALOG_STYLE_PASSWORD, COMMUNITY_NAME" - Register", ""COL_RED"ERROR: Invalid password!\n\n"COL_WHITE"Enter your desired password to continue:", "Register", "Quit");
 	}
 
-	format(Player[playerid][epd_Password], MAX_PLAYER_PASSWORD, "%s", inputtext);
+	WP_Hash(Player[playerid][epd_Password], MAX_PLAYER_PASSWORD, inputtext);
 
 	new
 		query[256];
