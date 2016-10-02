@@ -32,16 +32,6 @@
 *
 */
 
-Player_GetIP(playerid) {
-
-	return Player[playerid][epd_IP];
-}
-
-Player_GetName(playerid) {
-
-	return Player[playerid][epd_Username];
-}
-
 Player_GetIpAndPort(playerid) {
 
 	new ipport[24];
@@ -51,7 +41,7 @@ Player_GetIpAndPort(playerid) {
 
 Player_LoggedIn(playerid) {
 
-	return Player[playerid][epd_LoggedIn];
+	return _:BitFlag_Get(PlayerFlags[playerid], epf_LoggedIn);
 }
 
 Player_Kick(playerid, delay = 200) {
