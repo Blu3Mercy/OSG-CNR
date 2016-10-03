@@ -130,7 +130,8 @@ enum E_PLAYER_DATA {
 	epd_HackTestExpire,
 	epd_Weapon[13],
 	epd_Ammo[13],
-	epd_Team
+	epd_Team,
+	epd_Skin
 };
 new Player[MAX_PLAYERS][E_PLAYER_DATA];
 new ResetPlayer[E_PLAYER_DATA];

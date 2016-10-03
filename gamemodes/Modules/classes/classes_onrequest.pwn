@@ -201,7 +201,7 @@ Player_Spawn(playerid) {
 		classLoc = Player[playerid][epd_ClassEnvironment],
 		classid = Player[playerid][epd_CurrentClassID];
 
-	SetSpawnInfo(playerid, 0, 
+	SetSpawninfo(playerid, 0, 
 		gArr_Classes[classid][escd_SkinID],
 		gArr_ClassesEnvironment[classLoc][eced_X],
 		gArr_ClassesEnvironment[classLoc][eced_Y],

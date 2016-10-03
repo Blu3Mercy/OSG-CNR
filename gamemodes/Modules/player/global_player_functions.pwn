@@ -316,17 +316,3 @@ Player_ResetMoney(playerid) {
 	ResetPlayerMoney(playerid);
 	return true;
 }
-
-/*
-*
-*	Server-sided spawn
-*
-*/
-
-Player_SetSpawnInfo(playerid, teamid, skin, Float:X, Float:Y, Float:Z, Float:A, weapon1, ammo1, weapon2, ammo2, weapon3, ammo3) {
-
-	Player[playerid][epd_Skin] = skin;
-	Player[playerid][epd_Team] = teamid;
-	SetSpawnInfo(playerid, teamid, skin, X, Y, Z, A, weapon1, ammo1, weapon2, ammo2, weapon3, ammo3);
-	return true;
-}
