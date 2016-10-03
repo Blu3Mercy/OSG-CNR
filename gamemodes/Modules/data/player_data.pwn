@@ -70,7 +70,8 @@ enum E_PLAYER_FLAGS:(<<= 1) {
 	epf_LoggedIn = 1,
 	epf_Registered,
 	epf_Spawned,
-	epf_VIP
+	epf_VIP,
+	epf_HackTestPositive
 };
 new E_PLAYER_FLAGS:PlayerFlags[MAX_PLAYERS];
 
@@ -95,7 +96,8 @@ enum E_PLAYER_DATA {
 
 	epd_PlayTime,
 	epd_Experience,
-
+	epd_WantedLevel,
+	epd_Money,
 
 	/*
 	*
@@ -116,11 +118,19 @@ enum E_PLAYER_DATA {
 	epd_HostRetry,
 
 		// Class
-	epd_TempCurrentClass,
-	epd_CurrentClass,
+	epd_ClassEnvironment,
+	epd_TempCurrentClassID,
+	epd_CurrentClassID,
+	epd_Class,
 
 		// Camera positions
-	epd_CameraPosition
+	epd_CameraPosition,
+
+		// Anti hack
+	epd_HackTestExpire,
+	epd_Weapon[13],
+	epd_Ammo[13],
+	epd_Team
 };
 new Player[MAX_PLAYERS][E_PLAYER_DATA];
 new ResetPlayer[E_PLAYER_DATA];
@@ -149,7 +159,6 @@ enum {
 	DISCONNECT_REASON_RESTART,
 	DISCONNECT_REASON_KICKBAN,
 	DISCONNECT_REASON_QUIT
-
 };
 
 /*

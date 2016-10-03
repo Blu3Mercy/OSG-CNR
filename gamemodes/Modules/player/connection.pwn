@@ -641,13 +641,6 @@ Admin_SendConnectionMessages(playerid) {
 
 Time_ConvertSecondsToDate(&seconds, &minutes = -1, &hours = -1, &days = -1, &weeks = -1, &months = -1, &years = -1) {
 
-	#define SECONDS_IN_MINUTE	60
-	#define SECONDS_IN_HOUR		SECONDS_IN_MINUTE * 60
-	#define SECONDS_IN_DAY		SECONDS_IN_HOUR * 24
-	#define SECONDS_IN_WEEK		SECONDS_IN_DAY * 7
-	#define SECONDS_IN_MONTH	SECONDS_IN_WEEK * 4
-	#define SECONDS_IN_YEAR		SECONDS_IN_MONTH * 12
-
 	#define MF_Time_ConvertSeconds(%0,%1) %0 = (seconds / %1); seconds %= (%1)
 
 	new
@@ -822,4 +815,5 @@ Player_SaveDisconnectData(playerid) {
 		Player[playerid][epd_PlayTime], Player[playerid][epd_ID]
 	);
 	db_query(handle_id, query);
+	return true;
 }
