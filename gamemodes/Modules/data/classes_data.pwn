@@ -118,6 +118,8 @@ new const gArr_ClassesEnvironment[][E_CLASS_ENVIRONMENT_DATA] = {
 	{ -2475.256347, -307.014343, 41.466964, 46.523609 }
 };
 
+
+#define MAX_CLASSES				103 // ADJUST WHEN ADDING CLASSES TO gArr_Classes[]
 enum E_CLASSES_DATA {
 
 	escd_TeamName[50],
@@ -128,10 +130,12 @@ enum E_CLASSES_DATA {
 	escd_Class,
 	escd_FFT,
 	escd_Experience,
-	bool:escd_IsVIP
+	bool:escd_IsVIP,
+	bool:escd_Shown
 };
 new const gArr_Classes[][E_CLASSES_DATA] = {
 
+	// 103 classes listed below
 	{ "Police Officer",					"Eddie Pulaski",		"Police Officer~n~~w~~h~Eddie Pulaski",					COLOR_POLICE_OFFICER, 		266, 	CLASS_POLICE_OFFICER, 		1,			0,		false },
 	{ "Police Officer",					"Frank Tenpenny",		"Police Officer~n~~w~~h~Frank Tenpenny",				COLOR_POLICE_OFFICER, 		265, 	CLASS_POLICE_OFFICER, 		1,			0,		false },
 	{ "Police Officer",					"Jimmy Hernandez",		"Police Officer~n~~w~~h~Jimmy Hernandez",				COLOR_POLICE_OFFICER, 		267, 	CLASS_POLICE_OFFICER, 		1,			0,		false },
@@ -236,3 +240,33 @@ new const gArr_Classes[][E_CLASSES_DATA] = {
 	{ "Civilian",						"Adan Almanza",			"Civilian~n~~w~~h~Adan Almanza",						COLOR_CIVILIAN, 			70, 	CLASS_CIVILIAN, 			255,		0,		false },
 	{ "Civilian",						"Dion Kaiser",			"Civilian~n~~w~~h~Dion Kaiser",							COLOR_CIVILIAN, 			188, 	CLASS_CIVILIAN, 			255,		0,		false }
 };
+
+/*
+*
+*
+*	Perhaps a better way to check if the class is visible for the given player,
+*	Add it to the player's enum and check it there
+*	An unnecessary allocation of memory for gArr_ClassShown[] is then no longer needed
+*
+*	The amount of MAX_CLASSES arrays is then reduced to 1... though,
+*	It may get annoying when inspecting the code: [MAX_CLASSES] within [MAX_CLASSES]:
+*	Player[MAX_PLAYERS][epd_ClassVisible][MAX_CLASSES]
+*
+*	MAX_PLAYERS = 50
+*	MAX_CLASSES = 104
+*	50 * 104 = 10 * 104 = 1040 * 5 = 5200kB just for that array --> 5.2MB!!
+*
+*	Functions:
+*		-- Class_ShowToPlayer(classid, playerid)
+*		-- Class_HideForPlayer(classid, playerid)
+*
+*	Because of the method stated above, it allows us to set it visible or invisible for each individual player!
+*
+*
+
+new bool:gArr_ClassShown[MAX_CLASSES] = {
+
+	// 103 classes listed above, all of which are shown upon connection
+	true, ... // Sets all indices to 'true' without having to explicitely state 'true' for MAX_CLASSES-amount
+};
+*/

@@ -164,6 +164,19 @@ native WP_Hash(buffer[], len, const str[]);
 
 /*
 *
+*		Time
+*
+*/
+
+#define SECONDS_IN_MINUTE	60
+#define SECONDS_IN_HOUR		SECONDS_IN_MINUTE * 60
+#define SECONDS_IN_DAY		SECONDS_IN_HOUR * 24
+#define SECONDS_IN_WEEK		SECONDS_IN_DAY * 7
+#define SECONDS_IN_MONTH	SECONDS_IN_WEEK * 4
+#define SECONDS_IN_YEAR		SECONDS_IN_MONTH * 12
+
+/*
+*
 *
 *		Colors
 *
@@ -321,6 +334,10 @@ new DB:handle_id;
 // Server Data
 #include "\modules\data\server_data.pwn"
 
+// Classes Data
+// Must be included before player_data since it includes the definition for MAX_CLASSES
+#include "\modules\data\classes_data.pwn"
+
 // Player Data
 #include "\modules\data\player_data.pwn"
 
@@ -330,8 +347,6 @@ new DB:handle_id;
 // Textdraw Data
 #include "\modules\data\textdraw_data.pwn"
 
-// Classes Data
-#include "\modules\data\classes_data.pwn"
 
 /*
 *
@@ -366,6 +381,7 @@ new DB:handle_id;
 
 #include "\modules\player\global_player_functions.pwn"
 #include "\modules\player\connection.pwn"
+#include "\modules\player\spawn.pwn"
 
 /*
 *
@@ -481,7 +497,9 @@ as_fpublic:Database_SetupTables() {
 			`DisconnectReason` INTEGER DEFAULT 0, \
 			`Admin` INTEGER DEFAULT 0 NOT NULL, \
 			`PlayTime` INTEGER DEFAULT 0, \
-			`Experience` INTEGER DEFAULT 0 \
+			`Experience` INTEGER DEFAULT 0, \
+			`WantedLevel` INTEGER DEFAULT 0, \
+			`Money` INTEGER DEFAULT 0 \
 		)"
 	);
 	print("\'players\' created.");
@@ -554,6 +572,18 @@ task g_t_EverySecond[1000]() {
 		if(Player_LoggedIn(i)) {
 
 			Player[i][epd_PlayTime] ++;
+			if(Player[i][epd_HackTestExpire] > 0) {
+
+				Player[i][epd_HackTestExpire]--;
+			}
+			else {
+
+				for(new j = 0; ++j < 13;) {
+
+					Player_GetWeaponInSlot(i, j);
+					Player_GetAmmoInSlot(i, j);
+				}
+			}
 			//GetPlayerCash(i);
 		}
 	}

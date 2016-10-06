@@ -54,30 +54,28 @@ Classes_Load() {
 	return true;
 }
 
-/*Player_ShowClasses(playerid, experience = 0, bool:IsVIP = false) {
+Player_ShowClasses(playerid) {
 
-	*
+	/*
 	*
 	*		Shows all appropriate classes for the given playerid
 	*		This includes: VIP classes when the player is VIP
 	*		EXP-oriented classes, i.e.: a class that requires 1,000 XP
 	*
 	*
-	*
+	*/
 
+	// sizeof(gArr_Classes) is equal to MAX_CLASSES if the user doesn't forget to update the define
 	for(new i = sizeof(gArr_Classes); --i > -1;) {
+		
+		if((Player[playerid][epd_Experience] <= Class_GetRequiredEXP(i)) && (Class_IsVIPClass(i) && !BitFlag_Get(PlayerFlags[playerid], epf_VIP))) {
 
-		if(experience <= Class_GetRequiredEXP(i)) {
-
-
+			// Player experience is not enough or player is not a vip but the class is for vips
+			Class_HideForPlayer(i, playerid);
 		}
-		if(Class_IsVIPClass(i) && BitFlag_Get(PlayerFlags[playerid], epf_VIP)) {
-
-			Class_
-		}
+		// If the player has the required EXP and is a VIP or the class isn't a VIP:
+		Class_ShowForPlayer(i, playerid);
 	}
-	// Default classes
-
 	return true;
 }
 
@@ -89,4 +87,21 @@ Class_GetRequiredEXP(classid) {
 Class_IsVIPClass(classid) {
 
 	return gArr_Classes[classid][escd_IsVIP];
-}*/
+}
+
+Class_HideForPlayer(classid, playerid) {
+
+	Player[playerid][epd_ClassVisible][classid] = false;
+	return true;
+}
+
+Class_ShowForPlayer(classid, playerid) {
+
+	Player[playerid][epd_ClassVisible][classid] = true;
+	return true;
+}
+
+Class_IsVisibleForPlayer(classid, playerid) {
+
+	return Player[playerid][epd_ClassVisible][classid];
+}

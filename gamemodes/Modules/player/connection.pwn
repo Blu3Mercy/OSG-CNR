@@ -69,15 +69,11 @@ hook OnPlayerConnect(playerid) {
 
 Player_GetAllAccounts(playerid) {
 
-	printf("Player_GetAllAccounts[MF_Player_GetName(%d)] = %s", playerid, MF_Player_GetName(playerid));
-	printf("Player_GetAllAccounts[MF_Player_GetIP(%d)] = %s", playerid, MF_Player_GetIP(playerid));
-
 	new
 		query[150],
 		DBResult:db_Result;
 
 	format(query, sizeof(query), "SELECT Username, LastLoginDate FROM players WHERE IP = '%q' AND Username != '%q' COLLATE NOCASE", MF_Player_GetIP(playerid), MF_Player_GetName(playerid));
-	printf("OWN PRINT: %s", query);
 	db_Result = db_query(handle_id, query);
 
 	new
@@ -393,6 +389,8 @@ Player_SetDefaultVars(playerid) {
 
 	GetPlayerIp(playerid, Player[playerid][epd_IP], MAX_PLAYER_IP);
 	GetPlayerName(playerid, Player[playerid][epd_Username], MAX_PLAYER_NAME);
+
+	Player[playerid][epd_ClassEnvironment] = -1;
 	return true;
 }
 
@@ -491,7 +489,7 @@ Player_OnLookupComplete(playerid) {
 Player_LoadInitData(playerid) {
 
 	new
-		query[90],
+		query[128],
 		DBResult:db_Result;
 
 	format(query, sizeof(query), "SELECT ID, Password, LastLoginDate, DisconnectReason FROM players WHERE Username = '%q'", MF_Player_GetName(playerid));
@@ -563,6 +561,10 @@ Player_LoadAllData(playerid) {
 		Player[playerid][epd_Experience] = db_get_field_assoc_int(db_Result, "Experience");
 	}
 	db_free_result(db_Result);
+
+	Player_ShowClasses(playerid);
+	BitFlag_On(PlayerFlags[playerid], epf_LoggedIn);
+	TogglePlayerSpectating(playerid, false);
 	return true;
 }
 
@@ -597,6 +599,11 @@ Dialog:dia_Register(playerid, response, listitem, inputtext[]) {
 	Player[playerid][epd_ID] = db_get_field_int(db_result);
 
 	db_free_result(db_result);
+
+	Player_ShowClasses(playerid);
+	BitFlag_On(PlayerFlags[playerid], epf_LoggedIn);
+	BitFlag_On(PlayerFlags[playerid], epf_Registered);
+	TogglePlayerSpectating(playerid, false);
 	return true;
 }
 
@@ -637,13 +644,6 @@ Admin_SendConnectionMessages(playerid) {
 }
 
 Time_ConvertSecondsToDate(&seconds, &minutes = -1, &hours = -1, &days = -1, &weeks = -1, &months = -1, &years = -1) {
-
-	#define SECONDS_IN_MINUTE	60
-	#define SECONDS_IN_HOUR		SECONDS_IN_MINUTE * 60
-	#define SECONDS_IN_DAY		SECONDS_IN_HOUR * 24
-	#define SECONDS_IN_WEEK		SECONDS_IN_DAY * 7
-	#define SECONDS_IN_MONTH	SECONDS_IN_WEEK * 4
-	#define SECONDS_IN_YEAR		SECONDS_IN_MONTH * 12
 
 	#define MF_Time_ConvertSeconds(%0,%1) %0 = (seconds / %1); seconds %= (%1)
 
@@ -819,4 +819,5 @@ Player_SaveDisconnectData(playerid) {
 		Player[playerid][epd_PlayTime], Player[playerid][epd_ID]
 	);
 	db_query(handle_id, query);
+	return true;
 }
