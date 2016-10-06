@@ -71,7 +71,9 @@ enum E_PLAYER_FLAGS:(<<= 1) {
 	epf_Registered,
 	epf_Spawned,
 	epf_VIP,
-	epf_HackTestPositive
+	epf_HackTestPositive,
+	epf_WeaponHackPositive,
+	epf_AmmoHackPositive,
 };
 new E_PLAYER_FLAGS:PlayerFlags[MAX_PLAYERS];
 
@@ -99,12 +101,16 @@ enum E_PLAYER_DATA {
 	epd_WantedLevel,
 	epd_Money,
 
+	// Array with true and false to represent whether a class is visible or not
+	bool:epd_ClassVisible[MAX_CLASSES],
+
 	/*
 	*
 	*	Session data
 	*		(non-boolean: all boolean vars must be put in the FLAGS enum)
 	*
 	*/
+
 	epd_LoginAttempts,
 
 		// Lookup data

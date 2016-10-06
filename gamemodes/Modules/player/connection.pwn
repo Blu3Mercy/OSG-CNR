@@ -389,6 +389,8 @@ Player_SetDefaultVars(playerid) {
 
 	GetPlayerIp(playerid, Player[playerid][epd_IP], MAX_PLAYER_IP);
 	GetPlayerName(playerid, Player[playerid][epd_Username], MAX_PLAYER_NAME);
+
+	Player[playerid][epd_ClassEnvironment] = -1;
 	return true;
 }
 
@@ -560,6 +562,7 @@ Player_LoadAllData(playerid) {
 	}
 	db_free_result(db_Result);
 
+	Player_ShowClasses(playerid);
 	BitFlag_On(PlayerFlags[playerid], epf_LoggedIn);
 	TogglePlayerSpectating(playerid, false);
 	return true;
@@ -597,6 +600,7 @@ Dialog:dia_Register(playerid, response, listitem, inputtext[]) {
 
 	db_free_result(db_result);
 
+	Player_ShowClasses(playerid);
 	BitFlag_On(PlayerFlags[playerid], epf_LoggedIn);
 	BitFlag_On(PlayerFlags[playerid], epf_Registered);
 	TogglePlayerSpectating(playerid, false);

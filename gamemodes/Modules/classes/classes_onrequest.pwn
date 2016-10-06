@@ -72,6 +72,24 @@ hook OnPlayerRequestClass(playerid, classid) {
 
 Player_ClassValidate(playerid, classid, max_classes = (sizeof(gArr_Classes) - 1)) {
 
+	/*
+	*
+	*		The recursion in this program will lead to unexpected results
+	*		
+	*		-> Class of the player == 2
+	*		-> Class id 2 is a VIP class but the player isn't a VIP (Class_IsVisibleForPlayer evaluates to false)
+	*		-> ClassID ++ (3 now)
+	*		-> ClassID != classid (2 != 3)
+	*			-> Check again
+	*		-> Class of the player == 3
+	*		-> Class 3 is visible
+	*		-> SetTemporaryClass(playerid, 3)
+	*		-> SetTemporaryClass(playerid, 2) <-- back to the start!!
+	*		
+	*		returning the recursion might fix this behaviour
+	*
+	*/
+
 	new
 		tempClass = classid;
 
@@ -80,22 +98,20 @@ Player_ClassValidate(playerid, classid, max_classes = (sizeof(gArr_Classes) - 1)
 		// Reset the class selection when max_classes is exceeded
 		tempClass = 0;
 	}
-	if(gArr_Classes[classid][escd_IsVIP] && !BitFlag_Get(PlayerFlags[playerid], epf_VIP)) {
+	if(!Class_IsVisibleForPlayer(classid, playerid)) {
 
-		// Go to the next class when the player has selected a VIP class but isn't VIP
-		tempClass += 1;
-	}
-	if(gArr_Classes[classid][escd_Experience] > Player[playerid][epd_Experience]) {
-
-		// Go to the next class when the player has selected an Experience class but doesn't have enough experience
-		tempClass += 1;
+		// When the class is invisible
+		tempClass++;
 	}
 	if(tempClass != classid) {
 
-		// Recursively redo the class checking
-		Player_ClassValidate(playerid, classid);
+		// Recursively redo the class checking (see note at the top of the function)
+
+		// return Player_ClassValidate(playerid, classid); 
+		return Player_ClassValidate(playerid, tempClass);
 	}
 	Player_SetTemporaryClass(playerid, tempClass);
+	return true;
 }
 
 hook OnPlayerRequestSpawn(playerid) {
@@ -201,7 +217,7 @@ Player_Spawn(playerid) {
 		classLoc = Player[playerid][epd_ClassEnvironment],
 		classid = Player[playerid][epd_CurrentClassID];
 
-	SetSpawninfo(playerid, 0, 
+	SetSpawnInfo(playerid, 0, 
 		gArr_Classes[classid][escd_SkinID],
 		gArr_ClassesEnvironment[classLoc][eced_X],
 		gArr_ClassesEnvironment[classLoc][eced_Y],
