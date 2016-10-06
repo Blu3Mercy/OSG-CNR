@@ -62,3 +62,5 @@ samp-license.txt
 *.amx
 crashinfo.txt
 gamemodes/test.pwn
+gamemodes/testing_for.pwn
+gamemodes/testing_recursion.pwn
