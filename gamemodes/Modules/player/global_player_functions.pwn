@@ -32,19 +32,19 @@
 *
 */
 
-Player_GetIpAndPort(playerid) {
+stock Player_GetIpAndPort(playerid) {
 
 	new ipport[24];
 	NetStats_GetIpPort(playerid, ipport, sizeof(ipport));
 	return ipport;
 }
 
-Player_LoggedIn(playerid) {
+stock Player_LoggedIn(playerid) {
 
 	return _:BitFlag_Get(PlayerFlags[playerid], epf_LoggedIn);
 }
 
-Player_Kick(playerid, delay = 200) {
+stock Player_Kick(playerid, delay = 200) {
 
 	defer Player_ActualKick[delay](playerid);
 	return true;
@@ -62,7 +62,7 @@ timer Player_ActualKick[200](playerid) {
 *
 */
 
-Player_GetWeapons(playerid) {
+stock Player_GetWeapons(playerid) {
 
 	/*
 	*
@@ -114,7 +114,7 @@ Player_GetWeapons(playerid) {
 	return true;
 }
 
-Player_GetWeaponInSlot(playerid, slotid) {
+stock Player_GetWeaponInSlot(playerid, slotid) {
 
 	new
 		_weapon,
@@ -123,12 +123,13 @@ Player_GetWeaponInSlot(playerid, slotid) {
 	GetPlayerWeaponData(playerid, slotid, _weapon, _ammo);
 	if(_weapon != Player[playerid][epd_Weapon][slotid]) {
 
-		if(BitFlag_Get(PlayerFlags[playerid], epf_HackTestPositive) && Player[playerid][epd_HackTestExpire] <= 0) {
+		if(!BitFlag_Get(PlayerFlags[playerid], epf_WeaponHackPositive) && Player[playerid][epd_HackTestExpire] <= 0) {
 
 			Admin_SendTaggedMessage(1, TYPE_ALERT, "[ANTI-CHEAT #1] %p (ID: %d) has been tested positive of having hacked guns.", playerid, playerid);
 			Admin_SendTaggedMessage(1, TYPE_ALERT, "[ANTI-CHEAT #2] Hacked weapon: %w [slot: %d]", _weapon, slotid);
 
 			BitFlag_On(PlayerFlags[playerid], epf_HackTestPositive);
+			BitFlag_On(PlayerFlags[playerid], epf_WeaponHackPositive);
 			Player[playerid][epd_HackTestExpire] = SECONDS_IN_DAY * 1;
 		}
 		else {
@@ -140,7 +141,7 @@ Player_GetWeaponInSlot(playerid, slotid) {
 	return Player[playerid][epd_Weapon][slotid];
 }
 
-Player_GetAmmoInSlot(playerid, slotid) {
+stock Player_GetAmmoInSlot(playerid, slotid) {
 
 	new
 		_weapon,
@@ -149,12 +150,13 @@ Player_GetAmmoInSlot(playerid, slotid) {
 	GetPlayerWeaponData(playerid, slotid, _weapon, _ammo);
 	if(_ammo != Player[playerid][epd_Ammo][slotid]) {
 
-		if(BitFlag_Get(PlayerFlags[playerid], epf_HackTestPositive) && Player[playerid][epd_HackTestExpire] <= 0) {
+		if(!BitFlag_Get(PlayerFlags[playerid], epf_AmmoHackPositive) && Player[playerid][epd_HackTestExpire] <= 0) {
 
 			Admin_SendTaggedMessage(1, TYPE_ALERT, "[ANTI-CHEAT #1] %p (ID: %d) has been tested positive of having hacked ammo.", playerid, playerid);
 			Admin_SendTaggedMessage(1, TYPE_ALERT, "[ANTI-CHEAT #2] Hacked ammo for gun: %w (ammo: %d) [slot: %d]", _weapon, _ammo, slotid);
 
 			BitFlag_On(PlayerFlags[playerid], epf_HackTestPositive);
+			BitFlag_On(PlayerFlags[playerid], epf_AmmoHackPositive);
 			Player[playerid][epd_HackTestExpire] = SECONDS_IN_DAY * 1;
 		}
 		else {
@@ -166,7 +168,7 @@ Player_GetAmmoInSlot(playerid, slotid) {
 	return Player[playerid][epd_Ammo][slotid];
 }
 
-Player_ResetWeapons(playerid) {
+stock Player_ResetWeapons(playerid) {
 
 	for(new i = 0; i < 13; i++) {
 
@@ -174,10 +176,19 @@ Player_ResetWeapons(playerid) {
 		Player[playerid][epd_Ammo][i] = 0;
 	}
 	ResetPlayerWeapons(playerid);
+
+	if(BitFlag_Get(PlayerFlags[playerid], epf_WeaponHackPositive)) {
+
+		BitFlag_Off(PlayerFlags[playerid], epf_WeaponHackPositive);
+	}
+	if(BitFlag_Get(PlayerFlags[playerid], epf_AmmoHackPositive)) {
+
+		BitFlag_Off(PlayerFlags[playerid], epf_AmmoHackPositive);
+	}
 	return true;
 }
 
-Player_GiveWeapon(playerid, weaponid, ammo) {
+stock Player_GiveWeapon(playerid, weaponid, ammo) {
 
 	new
 		slotid = Weapon_GetSlot(weaponid);
@@ -215,26 +226,26 @@ Weapon_GetSlot(weaponid) {
 *
 */
 
-Player_GetWantedLevel(playerid) {
+stock Player_GetWantedLevel(playerid) {
 
 	return Player[playerid][epd_WantedLevel];
 }
 
-Player_DecreaseWantedLevel(playerid) {
+stock Player_DecreaseWantedLevel(playerid) {
 
 	Player[playerid][epd_WantedLevel]--;
 	SetPlayerWantedLevel(playerid, Player[playerid][epd_WantedLevel]);
 	return true;
 }
 
-Player_IncreaseWantedLevel(playerid) {
+stock Player_IncreaseWantedLevel(playerid) {
 
 	Player[playerid][epd_WantedLevel]++;
 	SetPlayerWantedLevel(playerid, Player[playerid][epd_WantedLevel]);
 	return true;
 }
 
-Player_SetWantedLevel(playerid, wantedlevel) {
+stock Player_SetWantedLevel(playerid, wantedlevel) {
 
 	Player[playerid][epd_WantedLevel] = wantedlevel;
 	SetPlayerWantedLevel(playerid, wantedlevel);
@@ -247,12 +258,12 @@ Player_SetWantedLevel(playerid, wantedlevel) {
 *
 */
 
-Player_GetSkin(playerid) {
+stock Player_GetSkin(playerid) {
 
 	return Player[playerid][epd_Skin];
 }
 
-Player_SetSkin(playerid, skinid) {
+stock Player_SetSkin(playerid, skinid) {
 
 	Player[playerid][epd_Skin] = skinid;
 	SetPlayerSkin(playerid, skinid);
@@ -265,7 +276,7 @@ Player_SetSkin(playerid, skinid) {
 *
 */
 
-Player_SetMoney(playerid, amount) {
+stock Player_SetMoney(playerid, amount) {
 
 	Player_ResetMoney(playerid);
 	Player[playerid][epd_Money] = amount;
@@ -273,7 +284,7 @@ Player_SetMoney(playerid, amount) {
 	return true;
 }
 
-Player_GetMoney(playerid) {
+stock Player_GetMoney(playerid) {
 
 	if(Player[playerid][epd_Money] != GetPlayerMoney(playerid)) {
 
@@ -294,7 +305,7 @@ Player_GetMoney(playerid) {
 	return Player[playerid][epd_Money];
 }
 
-Player_GiveMoney(playerid, amount) {
+stock Player_GiveMoney(playerid, amount) {
 
 	Player[playerid][epd_Money] += amount;
 	ResetPlayerMoney(playerid);
@@ -302,7 +313,7 @@ Player_GiveMoney(playerid, amount) {
 	return true;
 }
 
-Player_TakeMoney(playerid, amount) {
+stock Player_TakeMoney(playerid, amount) {
 
 	Player[playerid][epd_Money] -= amount;
 	ResetPlayerMoney(playerid);
@@ -310,7 +321,7 @@ Player_TakeMoney(playerid, amount) {
 	return true;
 }
 
-Player_ResetMoney(playerid) {
+stock Player_ResetMoney(playerid) {
 
 	Player[playerid][epd_Money] = 0;
 	ResetPlayerMoney(playerid);
