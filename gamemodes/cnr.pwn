@@ -334,6 +334,10 @@ new DB:handle_id;
 // Server Data
 #include "\modules\data\server_data.pwn"
 
+// Classes Data
+// Must be included before player_data since it includes the definition for MAX_CLASSES
+#include "\modules\data\classes_data.pwn"
+
 // Player Data
 #include "\modules\data\player_data.pwn"
 
@@ -343,8 +347,6 @@ new DB:handle_id;
 // Textdraw Data
 #include "\modules\data\textdraw_data.pwn"
 
-// Classes Data
-#include "\modules\data\classes_data.pwn"
 
 /*
 *
@@ -579,6 +581,7 @@ task g_t_EverySecond[1000]() {
 				for(new j = 0; ++j < 13;) {
 
 					Player_GetWeaponInSlot(i, j);
+					Player_GetAmmoInSlot(i, j);
 				}
 			}
 			//GetPlayerCash(i);
