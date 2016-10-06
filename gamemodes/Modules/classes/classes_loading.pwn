@@ -68,7 +68,7 @@ Player_ShowClasses(playerid) {
 	// sizeof(gArr_Classes) is equal to MAX_CLASSES if the user doesn't forget to update the define
 	for(new i = sizeof(gArr_Classes); --i > -1;) {
 		
-		if((Player[playerid][epd_Experience] <= Class_GetRequiredEXP(i)) && (Class_IsVIPClass(i) && !BitFlag_Get(PlayerFlags[playerid], epf_VIP))) {
+		if((Player[playerid][epd_Experience] <= Class_GetRequiredEXP(i)) && (Class_IsVIPClass(i) && BitFlag_Get(PlayerFlags[playerid], epf_VIP))) {
 
 			// Player experience is not enough or player is not a vip but the class is for vips
 			Class_HideForPlayer(i, playerid);
