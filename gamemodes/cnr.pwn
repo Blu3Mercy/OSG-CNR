@@ -71,20 +71,20 @@ public OnGameModeInit() {
 */
 
 // YSI includes
-#include <YSI\y_timers>
-#include <YSI\y_hooks>
-#include <YSI\y_va>
-#include <YSI\y_iterate>
-#include <YSI\y_bit>
-//#include <YSI\y_classes>
-//#include <YSI\y_groups>
+#include <YSI\y_timers>		// Credits to Y_Less 		(http://forum.sa-mp.com/showthread.php?t=570883)
+#include <YSI\y_hooks>		// Credits to Y_Less 		(http://forum.sa-mp.com/showthread.php?t=570883)
+#include <YSI\y_va>			// Credits to Y_Less 		(http://forum.sa-mp.com/showthread.php?t=570883)
+#include <YSI\y_iterate>	// Credits to Y_Less 		(http://forum.sa-mp.com/showthread.php?t=570883)
+#include <YSI\y_bit>		// Credits to Y_Less 		(http://forum.sa-mp.com/showthread.php?t=570883)
+//#include <YSI\y_classes>	// Credits to Y_Less 		(http://forum.sa-mp.com/showthread.php?t=570883)
+//#include <YSI\y_groups>	// Credits to Y_Less 		(http://forum.sa-mp.com/showthread.php?t=570883)
 
-#include <zcmd>
-#include <sscanf2>
-//#include <streamer>
-#include <formatex>
-#include <easyDialog>
-#include <a_http>
+#include <zcmd>				// Credits to Zeex/Xeez 	(http://forum.sa-mp.com/showthread.php?t=91354)
+#include <sscanf2>			// Credits to Y_Less 		(http://forum.sa-mp.com/showthread.php?t=570927)
+#include <streamer>			// Credits to Incognito 	(http://forum.sa-mp.com/showthread.php?t=102865)
+#include <formatex>			// Credits to Slice 		(http://forum.sa-mp.com/showthread.php?t=313488)
+#include <easyDialog>		// Credits to _Emmet 		(http://forum.sa-mp.com/showthread.php?t=475838)
+
 
 /*
 *
@@ -103,9 +103,9 @@ native WP_Hash(buffer[], len, const str[]);
 
 // Macro functions
 #define as_fpublic:%0(%1)					forward %0(%1); public %0(%1)
-#define KEY_HOLDING(%0)						((newkeys & (%0)) == (%0))
-#define KEY_RELEASED(%0)					(((newkeys & (%0)) != (%0)) && ((oldkeys & (%0)) == (%0)))
-#define KEY_PRESSED(%0)						(((newkeys & (%0)) == (%0)) && ((oldkeys & (%0)) != (%0)))
+#define MF_KEY_HOLDING(%0)					((newkeys & (%0)) == (%0))
+#define MF_KEY_RELEASED(%0)					(((newkeys & (%0)) != (%0)) && ((oldkeys & (%0)) == (%0)))
+#define MF_KEY_PRESSED(%0)					(((newkeys & (%0)) == (%0)) && ((oldkeys & (%0)) != (%0)))
 #define MF_Time_PluralSingular(%0,%1,%2) 	((%0) == 1) ? ((%1)) : ((%2))
 
 #define SPECIAL_ACTION_PISSING				68
@@ -347,6 +347,9 @@ new DB:handle_id;
 // Textdraw Data
 #include "\modules\data\textdraw_data.pwn"
 
+// Shops Data
+#include "\modules\data\shops_data.pwn"
+
 
 /*
 *
@@ -382,6 +385,7 @@ new DB:handle_id;
 #include "\modules\player\global_player_functions.pwn"
 #include "\modules\player\connection.pwn"
 #include "\modules\player\spawn.pwn"
+#include "\modules\player\on_player_text.pwn"
 
 /*
 *
@@ -391,6 +395,15 @@ new DB:handle_id;
 
 #include "\modules\textdraws\textdraw_creation.pwn"
 #include "\modules\textdraws\textdraw_functions.pwn"
+
+/*
+*
+*		Shop modules
+*
+*/
+
+#include "\modules\shops\shops_load.pwn"
+#include "\modules\shops\shops_enterexit.pwn"
 
 /*
 *
