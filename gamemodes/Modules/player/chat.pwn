@@ -40,11 +40,50 @@ hook OnPlayerText(playerid, text[]) {
 
 		return false;
 	}
-	if(text[0] == '!' && Player[playerid][epd_AdminLevel]) {
+	if(text[0] == '!' && Player[playerid][epd_Admin]) {
 
-		// Admin command work with '!' prefix too
-		format(cmdtext, sizeof(cmdtext), "cmd_%s", (text - text[0]);
-		return CallLocalFunction(cmdtext, "is", playerid, (text - text[0]));
+		if(Admin_IsACommand(text[1])) {
+
+			return CallLocalFunction("OnPlayerCommandText", "is", playerid, text[1]);
+		}
+	}
+	if(BitFlag_Get(PlayerRestrict[playerid], eprf_Muted)) {
+
+		new
+			second = Player[playerid][epd_MutedTime];
+
+		Player_SendTaggedMessage(playerid, TYPE_ERROR, "You are muted for %d seconds.", second);
+	}
+
+	// Restrictions:
+	if(BitFlag_Get(PlayerRestrict[playerid], eprf_Caps)) {
+
+		// Use as a function argument, not as an individual function:
+		// String_ConvertToLower(text);
+
+		SendFormattedMessageToAll(COLOR_WHITE, "%P: %s", playerid, String_ConvertToLower(text));
+		return false;
 	}
 	return true;
+}
+
+String_ConvertToLower(string[]) {
+
+	for(new i = 0, j = strlen(string); i < j; i++) {
+
+		string[i] = tolower(string[i]);
+	}
+	return string;
+}
+
+Admin_IsACommand(cmdtext[]) {
+
+	for(new i, j = sizeof(gArr_AdminCommands); i < j; i++) {
+
+		if(!strcmp(cmdtext, gArr_AdminCommands[i][eacd_Name])) {
+
+			return true;
+		}
+	}
+	return false;
 }
