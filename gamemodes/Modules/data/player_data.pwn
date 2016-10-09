@@ -73,7 +73,7 @@ enum E_PLAYER_FLAGS:(<<= 1) {
 	epf_VIP,
 	epf_HackTestPositive,
 	epf_WeaponHackPositive,
-	epf_AmmoHackPositive,
+	epf_AmmoHackPositive
 };
 new E_PLAYER_FLAGS:PlayerFlags[MAX_PLAYERS];
 
@@ -103,6 +103,9 @@ enum E_PLAYER_DATA {
 
 	// Array with true and false to represent whether a class is visible or not
 	bool:epd_ClassVisible[MAX_CLASSES],
+
+	// Restrictions that are not boolean
+	epd_MutedTime,
 
 	/*
 	*
@@ -141,6 +144,13 @@ enum E_PLAYER_DATA {
 };
 new Player[MAX_PLAYERS][E_PLAYER_DATA];
 new ResetPlayer[E_PLAYER_DATA];
+
+enum E_PLAYER_RESTRICTION_FLAGS:(<<= 1) {
+
+	eprf_Caps = 1,
+	eprf_Muted
+};
+new E_PLAYER_RESTRICTION_FLAGS:PlayerRestrict[MAX_PLAYERS];
 
 enum {
 

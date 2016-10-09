@@ -77,10 +77,10 @@ public OnGameModeInit() {
 #include <YSI\y_iterate>	// Credits to Y_Less 		(http://forum.sa-mp.com/showthread.php?t=570883)
 #include <YSI\y_bit>		// Credits to Y_Less 		(http://forum.sa-mp.com/showthread.php?t=570883)
 //#include <YSI\y_classes>	// Credits to Y_Less 		(http://forum.sa-mp.com/showthread.php?t=570883)
-//#include <YSI\y_groups>	// Credits to Y_Less 		(http://forum.sa-mp.com/showthread.php?t=570883)
+#include <YSI\y_groups>		// Credits to Y_Less 		(http://forum.sa-mp.com/showthread.php?t=570883)
 
-#include <zcmd>				// Credits to Zeex/Xeez 	(http://forum.sa-mp.com/showthread.php?t=91354)
 #include <sscanf2>			// Credits to Y_Less 		(http://forum.sa-mp.com/showthread.php?t=570927)
+#include <cmd_processor>	// Credits to Kevin Reinke	(http://forum.sa-mp.com/showthread.php?p=3778725)
 #include <streamer>			// Credits to Incognito 	(http://forum.sa-mp.com/showthread.php?t=102865)
 #include <formatex>			// Credits to Slice 		(http://forum.sa-mp.com/showthread.php?t=313488)
 #include <easyDialog>		// Credits to _Emmet 		(http://forum.sa-mp.com/showthread.php?t=475838)
